@@ -2,7 +2,7 @@ import os
 import cv2
 from tqdm import tqdm
 
-def load_dataset(dataset_path):
+def load_dataset(dataset_path, max_images=None):
     images_path = os.path.join(dataset_path, 'images/01')
     labels_path = os.path.join(dataset_path, 'labels/01')
 
@@ -10,6 +10,11 @@ def load_dataset(dataset_path):
 
     # Используем tqdm для создания прогресс-бара
     image_files = os.listdir(images_path)
+    
+    # Если max_images задан, ограничиваем количество файлов
+    if max_images is not None:
+        image_files = image_files[:max_images]
+
     for image_file in tqdm(image_files, desc="Loading dataset", unit="file"):
         # Предполагаем, что имена файлов изображений и меток совпадают, за исключением расширения
         image_id = os.path.splitext(image_file)[0]
@@ -43,7 +48,8 @@ def load_dataset(dataset_path):
 
 # Использование функции
 dataset_path = 'dataset'
-dataset = load_dataset(dataset_path)
+max_images_to_load = 100  # Задайте желаемое количество изображений
+dataset = load_dataset(dataset_path, max_images=max_images_to_load)
 
 # Пример обработки первого изображения и его аннотаций
 if dataset:
