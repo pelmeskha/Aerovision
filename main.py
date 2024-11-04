@@ -1,6 +1,37 @@
 import os
 import cv2
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+
+def draw_bounding_boxes(image, annotations):
+    # Получаем размеры изображения
+    height, width, _ = image.shape
+
+    for annotation in annotations:
+        class_id, x_center, y_center, box_width, box_height = annotation
+        
+        # Преобразуем координаты из относительных в абсолютные
+        x_center_abs = int(x_center * width)
+        y_center_abs = int(y_center * height)
+        box_width_abs = int(box_width * width)
+        box_height_abs = int(box_height * height)
+
+        # Определяем координаты верхнего левого и нижнего правого углов
+        x1 = int(x_center_abs - box_width_abs / 2)
+        y1 = int(y_center_abs - box_height_abs / 2)
+        x2 = int(x_center_abs + box_width_abs / 2)
+        y2 = int(y_center_abs + box_height_abs / 2)
+
+        # Рисуем прямоугольник на изображении
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+        # Добавляем текст с идентификатором класса (опционально)
+        cv2.putText(image, str(class_id), (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    # Используем Matplotlib для отображения изображения в цветах RGB
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.axis('off')  # Отключаем оси
+    plt.show()
 
 def load_dataset(dataset_path, max_images=None):
     images_path = os.path.join(dataset_path, 'images/01')
@@ -57,3 +88,7 @@ if dataset:
     print("Количество аннотаций:", len(annotations))
     for annotation in annotations:
         print("Аннотация:", annotation)
+
+    # Пример использования функции для первого изображения из датасета
+    image, annotations = dataset[0]
+    draw_bounding_boxes(image, annotations)
