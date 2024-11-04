@@ -1,13 +1,16 @@
 import os
 import cv2
+from tqdm import tqdm
 
 def load_dataset(dataset_path):
-    images_path = os.path.join(dataset_path, 'images')
-    labels_path = os.path.join(dataset_path, 'labels')
+    images_path = os.path.join(dataset_path, 'images/01')
+    labels_path = os.path.join(dataset_path, 'labels/01')
 
     dataset = []
 
-    for image_file in os.listdir(images_path):
+    # Используем tqdm для создания прогресс-бара
+    image_files = os.listdir(images_path)
+    for image_file in tqdm(image_files, desc="Loading dataset", unit="file"):
         # Предполагаем, что имена файлов изображений и меток совпадают, за исключением расширения
         image_id = os.path.splitext(image_file)[0]
         image_path = os.path.join(images_path, image_file)
